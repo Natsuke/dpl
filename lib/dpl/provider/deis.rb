@@ -81,10 +81,8 @@ module DPL
       end
 
       def push_app
-        context.shell "git push #{verbose_flag} deis HEAD:refs/heads/master -f 2>&1 | tr -dc '[:alnum:][:space:][:punct:]' | sed -E 's/remote: (\\[1G)+//' | sed 's/\\[K$//'"
-        if $PIPESTATUS[1]
-          error 'Deploying application failed'
-        end
+        unless context.shell "git push #{verbose_flag} deis HEAD:refs/heads/master -f 2>&1 | tr -dc '[:alnum:][:space:][:punct:]' | sed -E 's/remote: (\\[1G)+//' | sed 's/\\[K$//'; exit ${PIPESTATUS[1]}"
+          error 'Deployment build failed.'
       end
 
       def run(command)
